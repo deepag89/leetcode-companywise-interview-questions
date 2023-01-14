@@ -14,6 +14,7 @@ public class Main {
         long id;
         String title;
         String url;
+        String difficulty;
     
         @Override public boolean equals(Object o) {
             if (this == o) {
@@ -89,9 +90,10 @@ public class Main {
                     continue;
                 }
                 problem.title = nextRecord[1];
-                problem.url = nextRecord[2];
+                problem.url = "https://leetcode.com" + nextRecord[2];
+                problem.difficulty = nextRecord[5];
 //                System.out.println(problem);
-                String companyName = file.getName();
+                String companyName = file.getName().replace(".csv", "");
                 problemsToCompaniesMap.computeIfAbsent(problem, p -> new ArrayList<>()).add(companyName);
             }
         }
@@ -107,8 +109,21 @@ public class Main {
     
         try {
             FileWriter writer = new FileWriter("README.md");
+            writer.write("List of leetcode problems with companies in the reverse sorted order by company count. The"
+                + " source of the data is https://github.com/snehasishroy/leetcode-companywise-interview-questions"
+                + " " + System.lineSeparator() + System.lineSeparator());
+            writer.write("| Serial Number | ID | Problem | Difficulty | Companies" + System.lineSeparator());
+            writer.write("|------------:|------------:|------------:|------------:|------------|" + System.lineSeparator());
+            int serialNum = 1;
             for (Map.Entry<Problem, List<String>> problemEntry : problemsSortedByCompaniesCount) {
-                writer.write(line + System.lineSeparator());
+                Problem problem = problemEntry.getKey();
+                List<String> companies = problemEntry.getValue();
+                writer.write(serialNum++ + " | ");
+                writer.write(problem.id + " | ");
+                writer.write("[" + problem.title + "]" + "(" + problem.url + ")" + " | ");
+                writer.write(problem.difficulty + " | ");
+                writer.write(companies.toString());
+                writer.write(System.lineSeparator());
             }
             writer.close();
         } catch (Exception e) {
