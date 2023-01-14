@@ -7,6 +7,7 @@
 *.log
 npm-debug.log*
 .idea
+.idea/
 target/*
 # Runtime data
 pids
