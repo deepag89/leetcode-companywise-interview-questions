@@ -2,14 +2,28 @@ import com.opencsv.CSVReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Main {
+    static Set<String> companiesToKeep = new HashSet<>();
+    
+    static {
+        companiesToKeep.add("google");
+        companiesToKeep.add("microsoft");
+        companiesToKeep.add("atlassian");
+        companiesToKeep.add("linkedin");
+        companiesToKeep.add("salesforce");
+        companiesToKeep.add("oracle");
+        companiesToKeep.add("airbnb");
+        companiesToKeep.add("adobe");
+        companiesToKeep.add("vmware");
+    }
     static class Problem {
         long id;
         String title;
@@ -52,6 +66,10 @@ public class Main {
         File directory = new File("data/csv");
         File[] files = directory.listFiles();
         for (File file : files) {
+            String companyName = file.getName().replace(".csv", "");
+            if (companiesToKeep.stream().noneMatch(cToKeep -> companyName.toLowerCase().contains(cToKeep))) {
+                continue;
+            }
             FileReader filereader = null;
             try {
                 filereader = new FileReader(file);
@@ -93,7 +111,6 @@ public class Main {
                 problem.url = "https://leetcode.com" + nextRecord[2];
                 problem.difficulty = nextRecord[5];
 //                System.out.println(problem);
-                String companyName = file.getName().replace(".csv", "");
                 problemsToCompaniesMap.computeIfAbsent(problem, p -> new ArrayList<>()).add(companyName);
             }
         }
